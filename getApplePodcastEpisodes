@@ -1,0 +1,19 @@
+const searchTerm = "Earn your leisure"; // replace with the name of the podcast you want to search for
+
+fetch(`https://itunes.apple.com/search?term=${searchTerm}&entity=podcast`)
+  .then(response => response.json())
+  .then(data => {
+    const podcastId = data.results[0].collectionId; // get the ID of the first podcast in the search results
+    return fetch(`https://itunes.apple.com/lookup?id=${podcastId}&entity=podcastEpisode`);
+  })
+  .then(response => response.json())
+  .then(data => {
+    const episodes = data.results;
+    for (let i = 0; i < episodes.length; i++) {
+      const episodeName = episodes[i].trackName;
+      const episodeMp3 = episodes[i].enclosure.url;
+      const podcastName = episodes[i].collectionName;
+      console.log(`${podcastName}: ${episodeName} - ${episodeMp3}`);
+    }
+  })
+  .catch(error => console.error(error));
